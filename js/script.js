@@ -44,7 +44,6 @@ window.onload = function() {
   if (window.innerWidth < 1024 ){
     document.getElementById("all").style.display = "none";
     document.getElementById("error").style.display = "inline";
-    window.alert("Error: Not avaliable for smaller screens")
   }
   else{
     console.log("No-Error")
