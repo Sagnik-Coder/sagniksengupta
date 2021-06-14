@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img\20210529171402_IMG_0811.JPG" type="image/icon type">
+    <title>Sagnik Sengupta</title>
+</head>
+<body>
+
+<div id="error">
+<h5>Sorry not available for Smaller Screens.</h5>
+</div>
+
+<div id="Loading">
+    Loading
+</div>
+
+<div id="all">
+    
+    <div id="Home">
+        <nav>
+                <a href="#Home">Home</a>
+                <a href="#About">About</a>
+                <a href="#design">Designs</a>
+                <a href="#other_works">Works</a>
+                <a href="#Contact">Contact</a>
+        </nav>
+
+            <div class="img">
+                <img class="Profile" src="img/20210529171402_IMG_0811.JPG" alt="Profile-img">
+            </div>
+
+            <div class="display">
+                <h1>I am a <br>
+                    <span
+                        class="txt-rotate"
+                        data-period="1000"
+                        data-rotate='[ "Programmer.", "Photographer.", "Learner.", "Astrophile.", "Philomath." ]'>
+                    </span>
+                </h1>
+
+            </div>
+    </div>
+
+
+    <div id="About">
+
+        <img class="about_img" src="img/About_Img.svg" alt="About_Img">
+
+        <div class="about_text">
+            <p><span class="sub">I am <span class="sub__">Sagnik Sengupta</span></span> <br> A Programmer, Photographer, Astrophile, Learner and Philomath. I live in Suri, Birbhum, West bengal, India. I am <span id="age"></span> years old. I am a student of <a href="https://uppublicschool.edu.in/">U.P.Public School</a>. I started Programming when i was 12 (2019).It started, First I did a course of "IMPLEMENTATION OF MATHEMATICS IN PYTHON" from <a href="https://www.nittsd.com/">NITTSD</a>, here I got a bit of Knowledge of Programming.Then i did a course from <a href="https://www.whitehatjr.com/">WHITE HAT JR.</a> Here I got to know exactly what is  Programming?. Then I started specializing in javascript, HTML and CSS, React Native and practised many more frame works.Including this I also do Photography, Reading Astronomy & Philosphy. <br> Thank You</p>
+        </div>
+
+    </div>
+    
+
+    <div id="design" onload="Loading()">
+
+            <h1 id="K">Knot</h2>      
+            <canvas class="webgl"></canvas>
+
+            <h1 id="K">Torus</h2> 
+            <canvas class="webgl_2"></canvas>
+
+            <h1 id="K">Terrain</h2> 
+            <canvas class="webgl_3"></canvas>
+
+    </div> 
+    <div id="other_works">
+        <a target="_blank" href="https://sagnik-coder.github.io/3d">
+            <div class="o_w">
+                  <p>3D Sphere</p>  
+            </div>
+        </a>
+
+        <a target="_blank" href="https://sagnik-coder.github.io/writings">
+            <div class="o_w2">  
+                <p>Sagar Sengupta</p>  
+            </div>
+        </a>
+
+        <a target="_blank" href="https://sagnik-coder.github.io/Maths">
+            <div class="o_w">  
+                <p>Maths</p>  
+            </div>
+        </a>
+
+        <a target="_blank" href="https://sagnik-coder.github.io/Spiral-Creator">
+            <div class="o_w2">  
+                <p>Spiral Creator</p>
+            </div>
+        </a>
+
+        <a target="_blank" href="https://sagnik-coder.github.io/Calculator">
+            <div class="o_w">  
+                <p>Calculator</p>  
+            </div>
+        </a>
+        <a target="_blank" href="https://sagnik-coder.github.io/Heally">
+            <div class="o_w2">  
+                <p>Heally</p>  
+            </div>
+        </a>
+
+        <a target="_blank" href="https://sagnik-coder.github.io/Front-end_Animation">
+            <div class="o_w">  
+                <p>Web Animation</p>  
+            </div>
+        </a>
+
+        <a target="_blank" href="https://sagnik-coder.github.io/Quantum-TicTacToe">
+            <div class="o_w2">  
+                <p>Quantum Tic-Tac-Toe</p>  
+            </div>
+        </a>
+
+        <a target="_blank" href="https://sagnik-coder.github.io/BMI-Calculator">
+            <div class="o_w">  
+                <p>BMI Calculator</p>  
+            </div>
+        </a>
+    </div>
+
+    <footer id="Contact" >
+        <h3>Sagnik Sengupta</h3> 
+        <a target="_blank" href="https://www.instagram.com/sagnik.24/"><i class="fab fa-instagram fa-3x"></i></a>
+        <a target="_blank" href="https://github.com/Sagnik-Coder"><i class="fab fa-github fa-3x"></i></a>
+        <a target="_blank" href="https://linkedin.com/in/sagnik-sengupta-3286681b6/"><i class="fab fa-linkedin-in fa-3x"></i></a>
+        <p style="margin-top:50px">Phone No : +91 6296333739</p>
+        <p>E-mail : sagniksengupta24@gmail.com</p>
+        <p>© <span id="year"></span> Sagnik Sengupta</p>
+    </footer>
+
+</div>
+    
+    <script src="js/three.js"></script>
+	<script src="js/main.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
