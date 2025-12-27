@@ -1,145 +1,294 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="img\20210529171402_IMG_0811.JPG" type="image/icon type">
     <title>Sagnik Sengupta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { pviolet: '#7c3aed' } } }
+        }
+    </script>
+    <style>
+        :root { --p-600: #7c3aed; --bg: #f8fafc; --text: #020617; --card-bg: rgba(255, 255, 255, 0.6); }
+        .dark { --bg: #020617; --text: #f1f5f9; --card-bg: rgba(15, 23, 42, 0.6); }
+        
+        body { background-color: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; transition: background 0.3s ease; overflow-x: hidden; }
+        
+        /* Disable custom cursor on mobile */
+        @media (hover: none) and (pointer: coarse) {
+            #cursor-main, #cursor-outline { display: none !important; }
+            body { cursor: auto !important; }
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .bg-grid {
+            background-image: linear-gradient(to right, rgba(124, 58, 237, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(124, 58, 237, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        .crt-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 100;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+            background-size: 100% 4px;
+        }
+
+        #loader { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; justify-content: center; padding: 40px; }
+        .hacker-green { color: #22c55e; text-shadow: 0 0 10px #22c55e; }
+
+        .parallax-img { will-change: transform; transition: opacity 0.8s ease; opacity: 0; }
+        .parallax-img.active { opacity: 1; }
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s ease; }
+        .glass-card:hover { border-color: var(--p-600); box-shadow: 0 0 30px rgba(124, 58, 237, 0.1); }
+
+        #cursor-main { width: 8px; height: 8px; background: white; position: fixed; pointer-events: none; z-index: 1000; border-radius: 50%; mix-blend-mode: difference; }
+        #cursor-outline { width: 40px; height: 40px; border: 1px solid var(--p-600); position: fixed; pointer-events: none; z-index: 999; border-radius: 50%; transition: transform 0.1s ease; }
+
+        .progress-glow { background: var(--p-600); box-shadow: 0 0 15px var(--p-600); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
 </head>
-<body>
-
-<div id="error">
-<h5>Sorry not available for Smaller Screens.</h5>
-</div>
-
-<div id="Loading">
-    Loading
-</div>
-
-<div id="all">
-    
-    <div id="Home">
-        <nav>
-                <a href="#Home">Home</a>
-                <a href="#About">About</a>
-                <a href="#design">Designs</a>
-                <a href="#other_works">Works</a>
-                <a href="#Contact">Contact</a>
-        </nav>
-
-            <div class="img">
-                <img class="Profile" src="img/20210529171402_IMG_0811.JPG" alt="Profile-img">
-            </div>
-
-            <div class="display">
-                <h1>I am a <br>
-                    <span
-                        class="txt-rotate"
-                        data-period="1000"
-                        data-rotate='[ "Programmer.", "Photographer.", "Learner.", "Astrophile.", "Philomath." ]'>
-                    </span>
-                </h1>
-
-            </div>
+<body class="bg-grid">
+    <div class="crt-overlay"></div>
+    <div id="loader" class="mono hacker-green text-sm">
+        <div id="loader-content"></div>
     </div>
 
+    <div id="cursor-main"></div>
+    <div id="cursor-outline"></div>
 
-    <div id="About">
+    <nav class="fixed top-0 w-full z-50 px-4 md:px-6 py-4 md:py-6 flex justify-between items-center pointer-events-none">
+        <div class="mono font-bold text-white bg-[#22c55e] px-3 md:px-4 py-1 pointer-events-auto uppercase tracking-widest text-xs md:text-base">SS.SYS</div>
+        <div class="flex items-center gap-2 md:gap-4 pointer-events-auto">
+            <div class="glass-card rounded-full px-4 md:px-6 py-2 flex gap-4 md:gap-8 text-[9px] md:text-[10px] font-bold uppercase tracking-widest">
+                <a href="#about" class="hover:text-purple-400">Bio</a>
+                <a href="#work" class="hover:text-purple-400">Archive</a>
+                <a href="#contact" class="text-purple-400">Signal</a>
+            </div>
+            <button onclick="toggleTheme()" class="glass-card p-2 rounded-full hover:bg-white/10 transition">
+                <i data-lucide="sun" id="theme-icon-sun" class="w-4 h-4 hidden dark:block"></i>
+                <i data-lucide="moon" id="theme-icon-moon" class="w-4 h-4 block dark:hidden"></i>
+            </button>
+        </div>
+    </nav>
 
-        <img class="about_img" src="img/About_Img.svg" alt="About_Img">
+    <section class="min-h-screen flex flex-col justify-center px-6 md:px-24 relative overflow-hidden">
+        <div class="z-20">
+            <p class="mono text-purple-500 mb-4 reveal text-sm md:text-base">// ESTABLISHING_IDENTITY</p>
+            <h1 id="hero-name" class="text-[18vw] md:text-[12vw] font-black leading-[0.8] tracking-tighter uppercase mb-10 transition-transform reveal">
+                SAGNIK<br/>SENGUPTA<span class="text-purple-600">_</span>
+            </h1>
+            <div class="flex flex-wrap gap-4 mt-8 reveal">
+                <a href="#work" class="w-full md:w-auto px-8 py-4 bg-purple-600 text-white font-bold rounded-lg flex justify-center items-center gap-3 hover:invert transition">
+                    <i data-lucide="terminal" class="w-5 h-5"></i> Execute_Archive
+                </a>
+                <a href="https://github.com/Sagnik-Coder" target="_blank" class="w-full md:w-auto px-8 py-4 glass-card font-bold rounded-lg flex justify-center items-center gap-3 hover:bg-white/5 transition">
+                    <i data-lucide="github" class="w-5 h-5"></i> Source_Code
+                </a>
+            </div>
+        </div>
+        <img src="pic1.png" id="hero-pic" class="parallax-img absolute 
+            /* Mobile Settings */
+            bottom-10 right-[-10%] w-[200px] opacity-40 
+            /* Desktop Settings */
+            md:bottom-auto md:right-[4%] md:w-[500px] md:opacity-100 
+            drop-shadow-2xl transition-all" alt="Sagnik Hero">
+    </section>
 
-        <div class="about_text">
-            <p><span class="sub">I am <span class="sub__">Sagnik Sengupta</span></span> <br> A Programmer, Photographer, Astrophile, Learner and Philomath. I live in Suri, Birbhum, West bengal, India. I am <span id="age"></span> years old. I am a student of <a href="https://uppublicschool.edu.in/">U.P.Public School</a>. I started Programming when i was 12 (2019).It started, First I did a course of "IMPLEMENTATION OF MATHEMATICS IN PYTHON" from <a href="https://www.nittsd.com/">NITTSD</a>, here I got a bit of Knowledge of Programming.Then i did a course from <a href="https://www.whitehatjr.com/">WHITE HAT JR.</a> Here I got to know exactly what is  Programming?. Then I started specializing in javascript, HTML and CSS, React Native and practised many more frame works.Including this I also do Photography, Reading Astronomy & Philosphy. <br> Thank You</p>
+    <section id="about" class="py-20 md:py-32 px-6 md:px-24">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-center">
+            <div class="glass-card rounded-2xl overflow-hidden shadow-2xl reveal">
+                <div class="bg-white/10 px-4 py-2 border-b border-white/5 flex items-center justify-between">
+                    <div class="flex gap-2"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></div>
+                    <span class="mono text-[10px] text-slate-500">sagnik@architecture:~</span>
+                </div>
+                <div class="p-6 md:p-10 mono text-xs md:text-sm leading-relaxed text-slate-300">
+                    <p class="text-purple-400">➜ ~/info <span class="text-white">profile.log</span></p>
+                    <div class="mt-4 space-y-2">
+                        <p>> NAME: Sagnik Sengupta</p>
+                        <p>> ROLE: SYSTEM ARCHITECT & AI RESEARCHER</p>
+                        <p>> EXP: 12th Grade Student // Emerging Expert</p>
+                        <p>> STACK: Python, React, C++, NLP, Neural Networks</p>
+                        <p>> LOC: West Bengal, India</p>
+                    </div>
+                    <p class="mt-8 text-purple-400">➜ ~/info <span class="text-white">status --health</span></p>
+                    <p class="text-green-500 mt-2">>> SYSTEM_READY: 99.9% Uptime achieved.</p>
+                </div>
+            </div>
+            <div class="reveal">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6 tracking-tighter">01. <span class="text-purple-500 italic">PHILOSOPHY</span></h2>
+                <p class="text-lg md:text-xl text-slate-400 leading-relaxed">
+                    Driven by a foundation in Mathematics and Computer Science, I architect software like a balanced proof—prioritizing efficiency and structural integrity to solve complex real-world problems.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="work" class="py-20 px-6 max-w-7xl mx-auto">
+        <h2 class="text-4xl md:text-6xl font-black mb-10 md:text-center reveal uppercase">./ARCHIVE_VAULT</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 md:auto-rows-[180px]">
+            
+            <div class="md:col-span-2 md:row-span-3 glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] reveal flex flex-col justify-between group">
+                <div>
+                    <i data-lucide="database" class="text-purple-500 mb-6"></i>
+                    <h3 class="text-2xl md:text-4xl font-bold mb-4 uppercase">The_Engine_Room</h3>
+                    <div class="mono text-[10px] md:text-[11px] opacity-40 mb-6 bg-black/40 p-4 rounded-xl overflow-x-auto">
+                        root/api: spring-boot --port 8080<br>
+                        root/client: nextjs --ssr
+                    </div>
+                    <p class="text-slate-400 text-sm">Building specialized systems that prioritize security and lightning-fast data processing using industry-standard tools.</p>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-6">
+                    <span class="px-3 py-1 bg-white/5 rounded-full text-[9px] mono">REACT.JS</span>
+                    <span class="px-3 py-1 bg-white/5 rounded-full text-[9px] mono">ML</span>
+                    <span class="px-3 py-1 bg-white/5 rounded-full text-[9px] mono">NEURAL_NET</span>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 md:row-span-2 glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] reveal bg-gradient-to-br from-purple-500/10 to-transparent">
+                <i data-lucide="brain-circuit" class="text-purple-500 mb-6"></i>
+                <h3 class="text-xl md:text-2xl font-bold uppercase mb-4">NLP_Sentiment_Research</h3>
+                <p class="text-slate-400 text-sm italic mb-6">"Hybrid Transformer models for machine-text detection."</p>
+                <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full w-[92%] progress-glow"></div>
+                </div>
+                <div class="flex justify-between mt-2 mono text-[10px] font-bold text-purple-400">
+                    <span>ACCURACY_SCORE</span><span>92.4%</span>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-[2rem] reveal flex flex-col justify-center items-center text-center">
+                <div class="text-2xl font-black text-purple-500 italic uppercase">Clean Syntax</div>
+                <p class="mono text-[9px] text-slate-500 mt-1 uppercase tracking-widest">Code Efficiency</p>
+            </div>
+
+            <div class="glass-card p-6 rounded-[2rem] reveal flex flex-col justify-center items-center text-center group cursor-pointer" onclick="window.open('https://github.com/Sagnik-Coder')">
+                <i data-lucide="github" class="group-hover:scale-110 transition"></i>
+                <p class="mono text-[12px] mt-2">@Sagnik-Coder</p>
+            </div>
+
+            <div class="glass-card p-6 rounded-[2rem] reveal flex flex-col justify-center items-center text-center group cursor-pointer" onclick="window.open('https://www.instagram.com/sagnik.24/')">
+                <i data-lucide="instagram" class="group-hover:scale-110 transition"></i>
+                <p class="mono text-[12px] mt-2">@Sagnik.24</p>
+            </div>
+
+            <div class="glass-card p-6 md:p-8 rounded-[2rem] reveal flex flex-col justify-between">
+                <i data-lucide="bar-chart-3" class="text-slate-600"></i>
+                <h4 class="font-bold text-sm">Real-time_Analytics</h4>
+            </div>
+
+            <div class="md:col-span-2 glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] reveal border-l-4 border-green-800">
+                <h3 class="text-lg font-bold mb-4 mono">// CURRENT_RESEARCH</h3>
+                <p class="text-sm text-slate-400">Engineering "Digital Brains" by training Neural Networks to interpret complex linguistic patterns with human-like intuition.</p>
+            </div>
+
+            <div class="glass-card h-20 md:h-auto rounded-[2rem] reveal flex items-center justify-center mono text-sm md:text-lg font-bold">POSTGRESQL</div>
+            <div class="glass-card h-20 md:h-auto rounded-[2rem] reveal flex items-center justify-center mono text-sm md:text-lg font-bold text-purple-500">WEB DEV</div>
+            <div class="glass-card h-20 md:h-auto rounded-[2rem] reveal flex items-center justify-center mono text-sm md:text-lg font-bold">React.js</div>
+            <div class="glass-card h-20 md:h-auto rounded-[2rem] reveal flex items-center justify-center mono text-sm md:text-lg font-bold text-purple-500">PYTHON</div>
+            <div class="glass-card h-20 md:h-auto rounded-[2rem] reveal flex items-center justify-center mono text-sm md:text-lg font-bold">C++</div>
+
+            <div class="md:col-span-2 glass-card p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] reveal border-l-4 border-green-900">
+                <h3 class="text-lg font-bold mb-4 mono">// BLOCKCHAIN ARCHITECTURE</h3>
+                <p class="text-sm text-slate-400">Studying decentralized networks and mathematical trust to ensure data integrity without a central authority.</p>
+            </div>
+
+            <div class="glass-card h-20 md:h-auto rounded-[2rem] reveal flex items-center justify-center mono text-sm md:text-lg font-bold">Javascript</div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-20 md:py-40 px-6 max-w-4xl mx-auto relative">
+        <div class="text-center mb-10 md:mb-20 reveal">
+            <h2 class="text-5xl md:text-7xl font-black tracking-tighter uppercase mb-4">Signal_In</h2>
+            <p class="mono text-slate-500">// Open for collaborative research.</p>
         </div>
 
-    </div>
-    
-
-    <div id="design" onload="Loading()">
-
-            <h1 id="K">Knot</h2>      
-            <canvas class="webgl"></canvas>
-
-            <h1 id="K">Torus</h2> 
-            <canvas class="webgl_2"></canvas>
-
-            <h1 id="K">Terrain</h2> 
-            <canvas class="webgl_3"></canvas>
-
-    </div> 
-    <div id="other_works">
-        <a target="_blank" href="https://sagnik-coder.github.io/3d">
-            <div class="o_w">
-                  <p>3D Sphere</p>  
+        <form class="glass-card p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] reveal relative">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-8">
+                <div>
+                    <label class="mono text-[10px] uppercase text-slate-500 mb-2 block font-bold">Origin_ID</label>
+                    <input type="text" placeholder="Your Name" class="w-full bg-black/20 border border-white/5 p-4 rounded-xl focus:border-purple-600 outline-none transition mono text-sm">
+                </div>
+                <div>
+                    <label class="mono text-[10px] uppercase text-slate-500 mb-2 block font-bold">Return_Address</label>
+                    <input type="email" placeholder="email@example.com" class="w-full bg-black/20 border border-white/5 p-4 rounded-xl focus:border-purple-600 outline-none transition mono text-sm">
+                </div>
             </div>
-        </a>
-
-        <a target="_blank" href="https://sagnik-coder.github.io/writings">
-            <div class="o_w2">  
-                <p>Sagar Sengupta</p>  
+            <div class="mb-10">
+                <label class="mono text-[10px] uppercase text-slate-500 mb-2 block font-bold">Packet_Data</label>
+                <textarea rows="4" placeholder="Your message here..." class="w-full bg-black/20 border border-white/5 p-4 rounded-xl focus:border-purple-600 outline-none transition mono text-sm"></textarea>
             </div>
-        </a>
+            <button class="w-full py-5 bg-purple-600 text-white font-bold uppercase tracking-widest hover:invert transition active:scale-[0.98]">Dispatch_Signal</button>
+        </form>
+    </section>
 
-        <a target="_blank" href="https://sagnik-coder.github.io/Maths">
-            <div class="o_w">  
-                <p>Maths</p>  
-            </div>
-        </a>
-
-        <a target="_blank" href="https://sagnik-coder.github.io/Spiral-Creator">
-            <div class="o_w2">  
-                <p>Spiral Creator</p>
-            </div>
-        </a>
-
-        <a target="_blank" href="https://sagnik-coder.github.io/Calculator">
-            <div class="o_w">  
-                <p>Calculator</p>  
-            </div>
-        </a>
-        <a target="_blank" href="https://sagnik-coder.github.io/Heally">
-            <div class="o_w2">  
-                <p>Heally</p>  
-            </div>
-        </a>
-
-        <a target="_blank" href="https://sagnik-coder.github.io/Front-end_Animation">
-            <div class="o_w">  
-                <p>Web Animation</p>  
-            </div>
-        </a>
-
-        <a target="_blank" href="https://sagnik-coder.github.io/Quantum-TicTacToe">
-            <div class="o_w2">  
-                <p>Quantum Tic-Tac-Toe</p>  
-            </div>
-        </a>
-
-        <a target="_blank" href="https://sagnik-coder.github.io/BMI-Calculator">
-            <div class="o_w">  
-                <p>BMI Calculator</p>  
-            </div>
-        </a>
-    </div>
-
-    <footer id="Contact" >
-        <h3>Sagnik Sengupta</h3> 
-        <a target="_blank" href="https://www.instagram.com/sagnik.24/"><i class="fab fa-instagram fa-3x"></i></a>
-        <a target="_blank" href="https://github.com/Sagnik-Coder"><i class="fab fa-github fa-3x"></i></a>
-        <a target="_blank" href="https://linkedin.com/in/sagnik-sengupta-3286681b6/"><i class="fab fa-linkedin-in fa-3x"></i></a>
-	<img src="https://www.webfreecounter.com/hit.php?id=gvuoaapf&nd=6&style=3" border="0" alt="free counter"></a>
-        <p style="margin-top:30px">Phone No : +91 6296333739</p>
-        <p>E-mail : sagniksengupta24@gmail.com</p>
-        <p>© <span id="year"></span> Sagnik Sengupta</p>
+    <footer class="py-20 md:py-20 text-center relative px-6 overflow-hidden">
+        <img src="pic3.png" id="footer-pic" class="parallax-img absolute left-[-10%] bottom-0 w-[100px] md:w-[200px] opacity-20 grayscale pointer-events-none" alt="Sagnik Footer">
+        <p class="mono text-[10vw] md:text-[50px] text-slate-700 tracking-[0.5em] md:tracking-[1em] uppercase whitespace-nowrap">Sagnik_Sengupta</p>
     </footer>
 
-</div>
-    
-    <script src="js/three.js"></script>
-	<script src="js/main.js"></script>
-    <script src="js/script.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // 1. Terminal Loader (Hacker Green)
+        const lines = ["> BOOTING SAGNIK_OS...", "> KERNEL_CHECK: [OK]", "> LOADING_ARCHIVE...", "> SYSTEM_READY."];
+        let lineIdx = 0;
+        const loaderText = document.getElementById('loader-content');
+        function typeLoader() {
+            if (lineIdx < lines.length) {
+                loaderText.innerHTML += lines[lineIdx] + "<br/>";
+                lineIdx++;
+                setTimeout(typeLoader, 200);
+            } else {
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    loader.style.transform = "translateY(-100%)";
+                    loader.style.transition = "1s cubic-bezier(0.85, 0, 0.15, 1)";
+                }, 500);
+            }
+        }
+        window.onload = typeLoader;
+
+        // 2. Theme Toggle Logic
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+        }
+
+        // 3. Parallax Scroll
+        window.addEventListener('scroll', () => {
+            const scroll = window.pageYOffset;
+            const heroPic = document.getElementById('hero-pic');
+            const footerPic = document.getElementById('footer-pic');
+            const heroName = document.getElementById('hero-name');
+
+            if(window.innerWidth > 768) { // Only parallax on desktop for performance
+                if(heroPic) heroPic.style.transform = `translateX(${-scroll * 0.4}px) rotate(${scroll * 0.01}deg)`;
+                if(footerPic) footerPic.style.transform = `translateX(${scroll * 0.2}px)`;
+                if(heroName) heroName.style.transform = `translateX(${scroll * 0.3}px)`;
+            }
+        });
+
+        // 4. Reveal Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal, .parallax-img').forEach(el => observer.observe(el));
+
+        // 5. Cursor
+        const main = document.getElementById('cursor-main');
+        const outline = document.getElementById('cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            main.style.left = `${e.clientX - 4}px`; main.style.top = `${e.clientY - 4}px`;
+            outline.style.left = `${e.clientX - 20}px`; outline.style.top = `${e.clientY - 20}px`;
+        });
+    </script>
 </body>
 </html>
